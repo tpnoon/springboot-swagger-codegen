@@ -1,0 +1,65 @@
+plugins {
+	id 'org.springframework.boot' version '2.7.0'
+	id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+	id 'org.openapi.generator' version '6.0.0'
+	id 'java'
+}
+
+group = 'com.tpnoon'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '11'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+	maven { url 'https://repo.spring.io/milestone' }
+	maven { url 'https://repo.spring.io/snapshot' }
+}
+
+configurations {
+	all*.exclude module : 'spring-boot-starter-logging'
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'com.okta.spring:okta-spring-boot-starter:2.1.5'
+	implementation 'org.openapitools:openapi-generator-gradle-plugin:6.0.0'
+	implementation 'org.openapitools:jackson-databind-nullable:0.2.2'
+	implementation 'org.springdoc:springdoc-openapi-ui:1.6.9'
+	implementation 'org.springdoc:springdoc-openapi-security:1.6.9'
+	compileOnly 'org.springframework.boot:spring-boot-starter-log4j2'
+	compileOnly 'org.projectlombok:lombok:1.18.24'
+	compileOnly 'org.mapstruct:mapstruct:1.4.2.Final'
+	runtimeOnly 'io.micrometer:micrometer-registry-prometheus:1.9.0'
+	annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+	annotationProcessor 'org.projectlombok:lombok:1.18.24'
+	annotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+	testImplementation 'org.springframework.boot:spring-boot-starter-test'
+	testAnnotationProcessor 'org.mapstruct:mapstruct-processor:1.4.2.Final'
+}
+
+sourceSets.main.java.srcDirs = ['build/generated/src/main/java','src/main/java']
+
+tasks.named('test') {
+	useJUnitPlatform()
+}
+
+openApiGenerate {
+	generatorName = "spring"
+	inputSpec = "$rootDir/specs/swagger-v1.0.yaml".toString()
+	outputDir = "$buildDir/generated".toString()
+	apiPackage = "com.tpnoon.customer.api"
+	modelPackage = "com.tpnoon.customer.model"
+	configOptions = [
+			dateLibrary: "java8",
+			interfaceOnly: "true"
+	]
+}
+
+compileJava.dependsOn tasks.openApiGenerate

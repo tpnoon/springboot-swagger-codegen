@@ -1,0 +1,48 @@
+openapi: 3.0.3 # version of the specification
+
+info:
+  version: '1.0'
+  title: Swagger Customer Service
+
+servers:
+  - url: http://localhost:8080
+
+paths:
+  /customers:
+    post:
+      summary: create a customer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Customer'
+      responses:
+        201:
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Customer'
+        400:
+          description: Invalid request
+components:
+  # securitySchemes:
+  #   BasicAuth:
+  #     type: http
+  #     scheme: basic
+  schemas:
+    Customer:
+      type: object
+      properties:
+        firstName:
+          type: string
+          example: 'First Name'
+        lastName:
+          type: string
+          example: 'Last Name'
+        email:
+          type: string
+          example: 'email@mail.com'
+  # security:
+  # - BasicAuth: []
